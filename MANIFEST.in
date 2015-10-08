@@ -1,0 +1,3 @@
+include README.txt
+include setup.py
+include version_dummy/__init__.py
