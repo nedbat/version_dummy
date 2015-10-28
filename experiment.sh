@@ -20,6 +20,7 @@ pip install -r requirements.txt
 python show_version.py
 pip freeze | grep dummy
 pip uninstall -y version_dummy
+pip uninstall -y version_dummy
 
 echo
 echo "==== version_dummy with mismatched name ===="
@@ -31,6 +32,7 @@ echo "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=versiondummy" > re
 pip install -r requirements.txt
 python show_version.py
 pip freeze | grep dummy
+pip uninstall -y version_dummy
 pip uninstall -y version_dummy
 
 echo
@@ -44,6 +46,7 @@ pip install -r requirements.txt
 python show_version.py
 pip freeze | grep dummy
 pip uninstall -y version_dummy
+pip uninstall -y version_dummy
 
 echo
 echo "==== version_dummy with version ===="
@@ -55,6 +58,7 @@ echo "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy==2.0
 pip install -r requirements.txt
 python show_version.py
 pip freeze | grep dummy
+pip uninstall -y version_dummy
 pip uninstall -y version_dummy
 
 echo
@@ -68,6 +72,7 @@ pip install -r requirements.txt
 python show_version.py
 pip freeze | grep dummy
 pip uninstall -y version_dummy
+pip uninstall -y version_dummy
 
 echo
 echo "==== regular then -e ===="
@@ -79,6 +84,7 @@ echo "-e git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy" 
 pip install -r requirements.txt
 python show_version.py
 pip freeze | grep dummy
+pip uninstall -y version_dummy
 pip uninstall -y version_dummy
 
 rm requirements.txt show_version.py
