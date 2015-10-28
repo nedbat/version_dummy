@@ -59,11 +59,23 @@ pip uninstall -y version_dummy
 
 echo
 echo "==== -e then regular ===="
-echo "-e git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=versiondummy" > requirements.txt
+echo "-e git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" > requirements.txt
 pip install -r requirements.txt
 python show_version.py
 pip freeze | grep dummy
 echo "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy" > requirements.txt
+pip install -r requirements.txt
+python show_version.py
+pip freeze | grep dummy
+pip uninstall -y version_dummy
+
+echo
+echo "==== regular then -e ===="
+echo "git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" > requirements.txt
+pip install -r requirements.txt
+python show_version.py
+pip freeze | grep dummy
+echo "-e git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy" > requirements.txt
 pip install -r requirements.txt
 python show_version.py
 pip freeze | grep dummy
