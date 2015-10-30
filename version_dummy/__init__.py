@@ -1,1 +1,4 @@
-VERSION = "2.0.002"
+VERSION = "3.0"
+
+def one():
+    return "one"
