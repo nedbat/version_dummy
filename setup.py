@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name="version_dummy",
-    version="3.0",
+    version="4.0",
     author="Ned Batchelder",
     author_email="ned@nedbatchelder.com",
     url="http://nedbatchelder.com",
@@ -10,6 +10,7 @@ setup(
     entry_points={
         'call_me': [
             'one = version_dummy:one',
+            'two = version_dummy:two',
         ],
     },
 )
