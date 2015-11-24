@@ -1,3 +1,5 @@
+#!/bin/bash
+
 pip --version
 
 V1_SHA="da8cfc943a8acb3140349a81e96ea52430bf0e02"
@@ -31,140 +33,65 @@ for fn in interesting:
     print("    {0}\n        --> {1}".format(fn, contents))
 EOF_PY
 
-echo
-echo "==== version_dummy ===="
-# This demonstrates https://github.com/pypa/pip/issues/3212
-echo "git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-echo "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-pip uninstall -y version_dummy
-python show_version.py
-pip uninstall -y version_dummy
-python show_version.py
+install_and_show() {
+    echo "requirements.txt:"
+    cat requirements.txt
+    pip install -r requirements.txt
+    python show_version.py
+    pip freeze | grep dummy
+}
 
-echo
-echo "==== version_dummy with mismatched name ===="
-echo "git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=versiondummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-echo "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=versiondummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-pip uninstall -y version_dummy
-python show_version.py
-pip uninstall -y version_dummy
-python show_version.py
+uninstall_and_show() {
+    pip uninstall -y version_dummy
+    python show_version.py
+    pip uninstall -y version_dummy
+    python show_version.py
+}
 
-echo
-echo "==== version_dummy -e ===="
-echo "-e git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-echo "-e git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-pip uninstall -y version_dummy
-python show_version.py
-pip uninstall -y version_dummy
-python show_version.py
+experiment() {
+    echo
+    echo "$1"
+    echo "$2" > requirements.txt
+    install_and_show
+    echo "$3" > requirements.txt
+    install_and_show
+    uninstall_and_show
+}
 
-echo
-echo "==== version_dummy with version ===="
-echo "git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy==1.0" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-echo "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy==2.0" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-pip uninstall -y version_dummy
-python show_version.py
-pip uninstall -y version_dummy
-python show_version.py
+experiment "==== version_dummy ====" \
+    "git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" \
+    "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy"
 
-echo
-echo "==== -e then regular without version ===="
-echo "-e git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-echo "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-pip uninstall -y version_dummy
-python show_version.py
-pip uninstall -y version_dummy
-python show_version.py
+experiment "==== version_dummy with mismatched name ====" \
+    "git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=versiondummy" \
+    "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=versiondummy"
 
-echo
-echo "==== -e then regular with version ===="
-echo "-e git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-echo "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy==2.0" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-pip uninstall -y version_dummy
-python show_version.py
-pip uninstall -y version_dummy
-python show_version.py
+experiment "==== version_dummy -e ====" \
+    "-e git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" \
+    "-e git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy"
 
-echo
-echo "==== regular then -e ===="
-echo "git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-echo "-e git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-pip uninstall -y version_dummy
-python show_version.py
-pip uninstall -y version_dummy
-python show_version.py
+experiment "==== version_dummy with version ====" \
+    "git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy==1.0" \
+    "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy==2.0"
 
-echo
-echo "==== entry points with -e ===="
-echo "-e git+https://github.com/nedbat/version_dummy@$V3_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-echo "-e git+https://github.com/nedbat/version_dummy@$V4_SHA#egg=version_dummy" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-pip uninstall -y version_dummy
-python show_version.py
-pip uninstall -y version_dummy
-python show_version.py
+experiment "==== -e then regular without version ====" \
+    "-e git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" \
+    "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy"
 
-echo
-echo "==== new sha, dummy version ===="
-echo "-e git+https://github.com/nedbat/version_dummy@$V4_SHA#egg=version_dummy==4.0" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-echo "git+https://github.com/nedbat/version_dummy@$V4_001_SHA#egg=version_dummy==0.0" > requirements.txt
-pip install -r requirements.txt
-python show_version.py
-pip freeze | grep dummy
-pip uninstall -y version_dummy
-python show_version.py
-pip uninstall -y version_dummy
-python show_version.py
+experiment "==== -e then regular with version ====" \
+    "-e git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" \
+    "git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy==2.0"
+
+experiment "==== regular then -e ====" \
+    "git+https://github.com/nedbat/version_dummy@$V1_SHA#egg=version_dummy" \
+    "-e git+https://github.com/nedbat/version_dummy@$V2_SHA#egg=version_dummy"
+
+experiment "==== entry points with -e ====" \
+    "-e git+https://github.com/nedbat/version_dummy@$V3_SHA#egg=version_dummy" \
+    "-e git+https://github.com/nedbat/version_dummy@$V4_SHA#egg=version_dummy"
+
+experiment "==== new sha, dummy version ====" \
+    "-e git+https://github.com/nedbat/version_dummy@$V4_SHA#egg=version_dummy==4.0" \
+    "git+https://github.com/nedbat/version_dummy@$V4_001_SHA#egg=version_dummy==0.0"
 
 rm requirements.txt show_version.py
