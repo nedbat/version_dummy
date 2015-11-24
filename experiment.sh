@@ -4,6 +4,7 @@ V1_SHA="da8cfc943a8acb3140349a81e96ea52430bf0e02"
 V2_SHA="ca10cfd07afdce20d61249d5a8e306cf64a3b2b5"
 V3_SHA="313d158a266db3ef27724d9c9c3e145b4f9f6b5e"
 V4_SHA="9c283a84843a7cb15782afe580bbc4737af69ab5"
+V4_001_SHA="1c6e5d38d857cfb3b9a949baeb670f686728b750"
 
 cat > show_version.py << EOF_PY
 from distutils.sysconfig import get_python_lib
@@ -143,6 +144,21 @@ pip install -r requirements.txt
 python show_version.py
 pip freeze | grep dummy
 echo "-e git+https://github.com/nedbat/version_dummy@$V4_SHA#egg=version_dummy" > requirements.txt
+pip install -r requirements.txt
+python show_version.py
+pip freeze | grep dummy
+pip uninstall -y version_dummy
+python show_version.py
+pip uninstall -y version_dummy
+python show_version.py
+
+echo
+echo "==== new sha, dummy version ===="
+echo "-e git+https://github.com/nedbat/version_dummy@$V4_SHA#egg=version_dummy==4.0" > requirements.txt
+pip install -r requirements.txt
+python show_version.py
+pip freeze | grep dummy
+echo "git+https://github.com/nedbat/version_dummy@$V4_001_SHA#egg=version_dummy==0.0" > requirements.txt
 pip install -r requirements.txt
 python show_version.py
 pip freeze | grep dummy
