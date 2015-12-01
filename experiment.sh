@@ -1,7 +1,5 @@
 #!/bin/bash
 
-pip --version
-
 V1_SHA="da8cfc943a8acb3140349a81e96ea52430bf0e02"
 V2_SHA="ca10cfd07afdce20d61249d5a8e306cf64a3b2b5"
 V3_SHA="313d158a266db3ef27724d9c9c3e145b4f9f6b5e"
@@ -10,7 +8,17 @@ V4_001_SHA="1c6e5d38d857cfb3b9a949baeb670f686728b750"
 
 cat > show_version.py << EOF_PY
 from distutils.sysconfig import get_python_lib
-import os, os.path, pkg_resources
+import glob, os, os.path, pkg_resources, sys
+
+def show_glob(*parts):
+    for fn in glob.glob(os.path.join(*parts)):
+        if os.path.isfile(fn):
+            with open(fn) as f:
+                contents = f.read().strip()
+                contents = "| "+"\n            | ".join(contents.splitlines())
+        else:
+            contents = os.listdir(fn)
+        print("    {0}\n        --> {1}".format(fn, contents))
 
 try:
     import version_dummy
@@ -22,15 +30,8 @@ else:
     for ep in entrypoints:
         print("Entry point {0!r}: returns {1!r}".format(ep, ep.load()()))
 
-interesting = [fn for fn in os.listdir(get_python_lib()) if "dummy" in fn]
-for fn in interesting:
-    fn = os.path.join(get_python_lib(), fn)
-    if os.path.isfile(fn):
-        with open(fn) as f:
-            contents = f.read().strip()
-    else:
-        contents = os.listdir(fn)
-    print("    {0}\n        --> {1}".format(fn, contents))
+show_glob(get_python_lib(), "*dummy*")
+show_glob(sys.prefix, "src", "*")
 EOF_PY
 
 install_and_show() {
@@ -51,11 +52,15 @@ uninstall_and_show() {
 experiment() {
     echo
     echo "$1"
+    virtualenv venv
+    . venv/bin/activate
+    pip --version
     echo "$2" > requirements.txt
     install_and_show
     echo "$3" > requirements.txt
     install_and_show
     uninstall_and_show
+    rm -rf venv
 }
 
 experiment "==== version_dummy ====" \
