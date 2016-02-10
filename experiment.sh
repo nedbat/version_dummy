@@ -34,24 +34,25 @@ show_glob(get_python_lib(), "*dummy*")
 show_glob(sys.prefix, "src", "*")
 EOF_PY
 
+LIGHT_BLUE='\033[1;34m'
+NO_COLOR='\033[0m'
+
 install_and_show() {
-    echo "requirements.txt:"
-    cat requirements.txt
-    pip install -r requirements.txt
+    printf "pip install -r requirements.txt:${LIGHT_BLUE}\n$(cat requirements.txt)${NO_COLOR}\n"
+    pip install --disable-pip-version-check -r requirements.txt
     python show_version.py
-    pip freeze | grep dummy
+    pip freeze --disable-pip-version-check | grep dummy
 }
 
 uninstall_and_show() {
-    pip uninstall -y version_dummy
+    pip uninstall --disable-pip-version-check -y version_dummy
     python show_version.py
-    pip uninstall -y version_dummy
+    pip uninstall --disable-pip-version-check -y version_dummy
     python show_version.py
 }
 
 experiment() {
-    echo
-    echo "$1"
+    printf "\n\n$1\n"
     virtualenv venv
     . venv/bin/activate
     pip --version
